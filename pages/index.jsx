@@ -37,14 +37,14 @@ function Home() {
                                 <div className="flex-table">
                                     <div className="flex-list-inner">
                                     {/*Table item*/}
-                                    {servicos.map((item) => {
+                                    {servicos.map((item, index) => {
                                         return (
-                                        <div className="list-view-item">
+                                        <div key={index} className="list-view-item">
                                             <div className="list-view-item-inner">
                                                 <div className="pre-meta">
                                                     <h3 data-filter-match>{item.categoria_nome}</h3>
                                                 </div>
-                                                <img className="avatar" src="https://via.placeholder.com/150x150" alt="" />
+                                                <img className="avatar" src={`/imagens/categorias/${item.id}.jpg`} alt="" />
                                                 <div className="meta-left">
                                                     {item.descricao}
                                                 </div>
@@ -53,11 +53,6 @@ function Home() {
                                                     <Link href={`/categorias/${item.id}`}>
                                                         <a className="button h-button is-primary is-outlined is-raised">Ver Serviços</a>
                                                     </Link>
-                                                    <a className="button is-light is-circle hint--bubble hint--primary hint--top" data-hint="Salvar">
-                                                        <span className="icon is-small">
-                                                            <Heart/>
-                                                        </span>
-                                                    </a>
                                                 </div>
                                                 </div>
                                             </div>

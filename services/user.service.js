@@ -1,7 +1,7 @@
 import { BehaviorSubject } from 'rxjs';
 import getConfig from 'next/config';
 import Router from 'next/router'
-
+import fastis from '../helpers/axios'
 import { fetchWrapper } from 'helpers';
 
 const { publicRuntimeConfig } = getConfig();
@@ -16,14 +16,30 @@ export const userService = {
     getAll
 };
 
-function login(username, password) {
-    return fetchWrapper.post(`${baseUrl}/authenticate`, { username, password })
-        .then(user => {
-            // publish user to subscribers and store in local storage to stay logged in between page refreshes
-            userSubject.next(user);
-            localStorage.setItem('user', JSON.stringify(user));
-            return user;
-        });
+async function login(username, password) {
+    let response;
+    try{
+        response = await fastis.get(`/login`, {
+            auth: {
+                username,
+                password
+            }
+        })
+        let user = response.data;
+        userSubject.next(user);
+        localStorage.setItem('user', JSON.stringify(user));
+        return user;
+    }catch(e){
+        console.log(e.request)
+        switch(e.response.status){
+            case 401:
+                throw 'Usuário e/ou senha incorretos'
+            default:
+                throw 'Ocorreu um erro ao tentar se comunicar com o servidor de autenticação'
+        }
+    }
+
+    return response.data;
 }
 
 function logout() {

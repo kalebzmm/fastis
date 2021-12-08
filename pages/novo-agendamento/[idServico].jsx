@@ -2,7 +2,7 @@ import { Nav } from 'components';
 import { useState, useEffect } from 'react';
 import fastis from '../../helpers/axios';
 import { useRouter } from 'next/router';
-import {format} from 'date-fns';
+import {format, setDate} from 'date-fns';
 
 export default Home;
 
@@ -29,22 +29,35 @@ function Home(props) {
         deletedAt: "",
         sub_categoria_id: ""
     })
+    const [loading, setLoading] = useState(false)
+    const [date, setDate] = useState('')
+    const [time, setTime] = useState('')
+    const [observacao, setObservacao] = useState('')
 
     useEffect(() => {
-        bulmaCalendar.attach('#bulma-datepicker-2', {
-            displayMode: 'dialog',
-            dateFormat: 'DD/MM/YYYY',
-            startDate: new Date(),
-            minDate: new Date(),
-            color: themeColors.primary,
-            lang: 'pt-BR'
-        });
         fastis.get(`/subcategorias/busca/${idServico}`).then((data) => {
             setServico(data.data[0]);
         }).catch((err) => {
             console.log(err)
         })
     }, [])
+
+    function enviaForm(){
+        setLoading(true);
+        fastis.post('/agendamento/novo', {
+            cnpj: servico.cnpj,
+            data: date + ' ' + time,
+            observacoes: observacao,
+            servico: '',
+            empresa_id: '',
+            cliente_id: JSON.parse(localStorage.user).id,
+        }).then((response) => {
+            console.log(response.data)
+            setLoading(false);
+        }).catch((e) => {
+            setLoading(false);
+        })
+    }
 
     return (
     <div id="huro-app" className="app-wrapper">
@@ -74,7 +87,7 @@ function Home(props) {
                                     </span>
                                     <span>Cancelar</span>
                                 </a>
-                                <button id="save-button" className="button h-button is-primary is-raised">Agendar</button>
+                                <button onClick={() => enviaForm()} id="save-button" className={`button h-button is-primary is-raised ${loading ? 'is-loading' : ''}`}>Agendar</button>
                             </div>
                             </div>
                         </div>
@@ -85,7 +98,7 @@ function Home(props) {
                                 <h3>Serviço</h3>
                                 <div className="field">
                                     <div className="control has-icon">
-                                        <input value={servico.nome} className="input is-disabled" placeholder="Nome" />
+                                        <input value={servico.nome} className="input is-disabled" readOnly placeholder="Nome" />
                                         <div className="form-icon">
                                             <i className="lnil lnil-apartment"></i>
                                         </div>
@@ -93,7 +106,7 @@ function Home(props) {
                                 </div>
                                 <div className="field">
                                     <div className="control has-icon">
-                                        <input value={servico.email} className="input is-disabled" placeholder="Nome" />
+                                        <input value={servico.email} className="input is-disabled" readOnly placeholder="Nome" />
                                         <div className="form-icon">
                                             <i className="lnil lnil-envelope"></i>
                                         </div>
@@ -101,7 +114,7 @@ function Home(props) {
                                 </div>
                                 <div className="field">
                                     <div className="control has-icon">
-                                        <input value={servico.responsavel} className="input is-disabled" placeholder="Nome" />
+                                        <input value={servico.responsavel} className="input is-disabled" readOnly placeholder="Nome" />
                                         <div className="form-icon">
                                             <i className="lnil lnil-user"></i>
                                         </div>
@@ -109,7 +122,7 @@ function Home(props) {
                                 </div>
                                 <div className="field">
                                     <div className="control has-icon">
-                                        <input value={servico.telefone} className="input is-disabled" placeholder="Nome" />
+                                        <input value={servico.telefone} className="input is-disabled" readOnly placeholder="Nome" />
                                         <div className="form-icon">
                                             <i className="lnil lnil-phone"></i>
                                         </div>
@@ -120,12 +133,17 @@ function Home(props) {
                             <h3>Agendamento</h3>
                                 <div className="field">
                                     <div className="control">
-                                        <input id="bulma-datepicker-2" className="input" type="date"/>
+                                        <input onChange={(val) => setDate(val)} className="input" type="date"/>
                                     </div>
                                 </div>
                                 <div className="field">
                                     <div className="control">
-                                        <textarea className="textarea" rows="4" placeholder="Alguma observação?"></textarea>
+                                        <input onChange={(val) => setTime(val)} className="input" type="time"/>
+                                    </div>
+                                </div>
+                                <div className="field">
+                                    <div className="control">
+                                        <textarea onChange={(val) => setObservacao(val)} className="textarea" rows="4" placeholder="Alguma observação?"></textarea>
                                     </div>
                                 </div>
                             </div>

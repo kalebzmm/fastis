@@ -7,7 +7,7 @@ module.exports = {
     publicRuntimeConfig: {
         apiEndpoint: 'https://fastis-jdzq8.ondigitalocean.app',
         apiUrl: process.env.NODE_ENV === 'development'
-            ? 'http://localhost:3000/api' // development api
-            : 'http://localhost:3000/api' // production api
+            ? 'http://192.168.0.109:3000/api' // development api
+            : 'http://192.168.0.109:3000/api' // production api
     }
 }

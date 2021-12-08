@@ -23,17 +23,18 @@ function handler(req, res) {
             return res.status(405).end(`Method ${req.method} Not Allowed`)
     }
 
-    async function getCode(username, password){
+    async function login(username, password){
         let response;
         try{
-            response = await axios.post(`${apiEndpoint}/auth/login`, {
-                client_id: clientId,
-                client_secret: clientSecret,
-                username,
-                password
+            response = await axios.get(`${apiEndpoint}/login`, {}, {
+                auth: {
+                    username,
+                    password
+                }
             })
         }catch(e){
-            switch(e.status.code){
+            console.log(e.response)
+            switch(e.response.status){
                 case 401:
                     throw 'Usuário e/ou senha incorretos'
                 default:
@@ -41,39 +42,18 @@ function handler(req, res) {
             }
         }
 
-        return response.data.code;
-
-    }
-
-    async function getToken(code, username) {
-        let response;
-        try{
-            response = await axios.post(`${apiEndpoint}/auth/token`, {
-                code,
-                clientId: clientId,
-                username
-            })
-        }catch(e){
-            switch(e.status.code){
-                case 401:
-                    throw 'Usuário e/ou senha incorretos'
-                default:
-                    throw 'Ocorreu um erro ao tentar se comunicar com o servidor de autenticação'
-            }
-        }
         return response.data;
+
     }
 
     async function authenticate() {
-        // const { username, password } = req.body;
+        const { username, password } = req.body;
 
-        // const code = await getCode(username, password);
-        // const { accessToken, refreshToken } = await getToken(code, username);
+        let data = await login(username, password);
 
         // return basic user details and token
         return res.status(200).json({
-            accessToken: '231232112hj12h2g3hj21g3123g1j23g1',
-            refreshToken: '2tq7dbasd67wqdbqwydo'
+            username,
         });
     }
 }
