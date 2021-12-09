@@ -18,7 +18,8 @@ function Home(props) {
 
     const router = useRouter()
 
-    const idServico = props.idServico;
+    // const idServico = props.idServico;
+    const idServico = 2;
     const [servico, setServico] = useState({
         id: "",
         cnpj: "",
@@ -36,6 +37,7 @@ function Home(props) {
 
     useEffect(() => {
         fastis.get(`/subcategorias/busca/${idServico}`).then((data) => {
+            console.log(data.data)
             setServico(data.data[0]);
         }).catch((err) => {
             console.log(err)
@@ -46,14 +48,14 @@ function Home(props) {
         setLoading(true);
         fastis.post('/agendamento/novo', {
             cnpj: servico.cnpj,
-            data: date + ' ' + time,
+            data: date + ' ' + time + ':00',
             observacoes: observacao,
-            servico: '',
-            empresa_id: '',
+            servico: 'corte de cabelo',
+            empresa_id: idServico,
             cliente_id: JSON.parse(localStorage.user).id,
         }).then((response) => {
-            console.log(response.data)
             setLoading(false);
+            router.push('/meus-agendamentos')
         }).catch((e) => {
             setLoading(false);
         })
@@ -133,17 +135,17 @@ function Home(props) {
                             <h3>Agendamento</h3>
                                 <div className="field">
                                     <div className="control">
-                                        <input onChange={(val) => setDate(val)} className="input" type="date"/>
+                                        <input onChange={(ev) => setDate(ev.target.value)} className="input" type="date"/>
                                     </div>
                                 </div>
                                 <div className="field">
                                     <div className="control">
-                                        <input onChange={(val) => setTime(val)} className="input" type="time"/>
+                                        <input onChange={(ev) => setTime(ev.target.value)} className="input" type="time"/>
                                     </div>
                                 </div>
                                 <div className="field">
                                     <div className="control">
-                                        <textarea onChange={(val) => setObservacao(val)} className="textarea" rows="4" placeholder="Alguma observação?"></textarea>
+                                        <textarea onChange={(ev) => setObservacao(ev.target.value)} className="textarea" rows="4" placeholder="Alguma observação?"></textarea>
                                     </div>
                                 </div>
                             </div>

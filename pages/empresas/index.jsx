@@ -1,30 +1,18 @@
 import { Nav } from 'components';
-import {useRouter} from 'next/router';
+import Head from 'next/head';
 import { useEffect, useState } from 'react';
 import fastis from '../../helpers/axios'
-import Link from 'next/link'
 
 export default Home;
 
-export const getServerSideProps = async (context) => {
-    let { id } = context.query;
-    if (!id) {
-      id = null;
-    }
-    return { props: { id:id } };
-}
+function Home() {
 
-function Home(props) {
-
-    const id = props.id;
     const [servicos, setServicos] = useState([])
 
     useEffect(() => {
-        fastis.get(`/categorias/busca/${id}`).then((data) => {
+        fastis.get('https://fastis-jdzq8.ondigitalocean.app/subcategorias').then((data) => {
             setServicos(data.data);
-        }).catch((err) => {
-            console.log(err)
-        })
+        });
     }, [])
 
     return (
@@ -36,7 +24,7 @@ function Home(props) {
 
                 <div className="page-title has-text-centered">
                     <div className="title-wrap">
-                        <h1 className="title is-4">Serviços</h1>
+                        <h1 className="title is-4">Serviços Disponíveis</h1>
                     </div>
                 </div>
 
@@ -48,6 +36,8 @@ function Home(props) {
                                     {/*Table header*/}
                                     <div className="flex-table-header" data-filter-hide>
                                         <span className="is-grow-lg">Serviço</span>
+                                        <span>Categoria</span>
+                                        <span>Descrição</span>
                                         <span className="cell-end">Ações</span>
                                     </div>
                                     <div className="flex-list-inner">
@@ -56,15 +46,19 @@ function Home(props) {
                                         return (
                                         <div key={item.id} className="flex-table-item">
                                             <div className="flex-table-cell is-media is-grow-lg">
-                                            <img className="media" src={`/imagens/subcategorias/${item.id}.jpg`} alt="" />
+                                            <img className="media" src="https://via.placeholder.com/150x110" alt="" />
                                             <div>
                                                 <span className="item-name dark-inverted" data-filter-match>{item.nome}</span>
                                             </div>
                                             </div>
+                                            <div className="flex-table-cell" data-th="Categoria">
+                                                <span className="light-text" data-filter-match>{item.categoria_id}</span>
+                                            </div>
+                                            <div className="flex-table-cell">
+
+                                            </div>
                                             <div className="flex-table-cell cell-end" data-th="Ações">
-                                                <Link href={`/empresas/${item.id}`}>
-                                                    <a className="button h-button has-dot dark-outlined is-pushed-mobile">Ver Empresas</a>
-                                                </Link>
+                                            <a className="button h-button has-dot dark-outlined is-pushed-mobile">Agendar</a>
                                             </div>
                                         </div>
                                         )

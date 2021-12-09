@@ -17,11 +17,13 @@ export const getServerSideProps = async (context) => {
 function Home(props) {
 
     const id = props.id;
-    const [servicos, setServicos] = useState([])
+    const [empresas, setEmpresas] = useState([])
 
     useEffect(() => {
-        fastis.get(`/categorias/busca/${id}`).then((data) => {
-            setServicos(data.data);
+        fastis.get(`/subcategorias/busca/${id}`).then((data) => {
+            setEmpresas(data.data);
+            console.log(data.data[0])
+
         }).catch((err) => {
             console.log(err)
         })
@@ -36,7 +38,7 @@ function Home(props) {
 
                 <div className="page-title has-text-centered">
                     <div className="title-wrap">
-                        <h1 className="title is-4">Serviços</h1>
+                        <h1 className="title is-4">Empresas</h1>
                     </div>
                 </div>
 
@@ -47,23 +49,23 @@ function Home(props) {
                                 <div className="flex-table">
                                     {/*Table header*/}
                                     <div className="flex-table-header" data-filter-hide>
-                                        <span className="is-grow-lg">Serviço</span>
+                                        <span className="is-grow-lg">Empresa</span>
                                         <span className="cell-end">Ações</span>
                                     </div>
                                     <div className="flex-list-inner">
                                     {/*Table item*/}
-                                    {servicos.map((item) => {
+                                    {empresas.map((item) => {
                                         return (
                                         <div key={item.id} className="flex-table-item">
                                             <div className="flex-table-cell is-media is-grow-lg">
-                                            <img className="media" src={`/imagens/subcategorias/${item.id}.jpg`} alt="" />
+                                            <img className="media" src={`/imagens/empresas/${item.id}.jpg`} alt="" />
                                             <div>
                                                 <span className="item-name dark-inverted" data-filter-match>{item.nome}</span>
                                             </div>
                                             </div>
                                             <div className="flex-table-cell cell-end" data-th="Ações">
-                                                <Link href={`/empresas/${item.id}`}>
-                                                    <a className="button h-button has-dot dark-outlined is-pushed-mobile">Ver Empresas</a>
+                                                <Link href={`/novo-agendamento/${item.id}`}>
+                                                    <a className="button h-button has-dot dark-outlined is-pushed-mobile">Agendar</a>
                                                 </Link>
                                             </div>
                                         </div>
